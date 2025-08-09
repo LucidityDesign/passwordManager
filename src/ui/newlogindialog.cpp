@@ -12,3 +12,12 @@ NewLoginDialog::~NewLoginDialog()
 {
     delete ui;
 }
+
+QString NewLoginDialog::getUsername() {
+    return ui->lineEditUsername->text();
+}
+
+QString NewLoginDialog::getPassword() {
+    return ui->lineEditPassword->text();
+}
+

@@ -14,6 +14,8 @@ class NewLoginDialog : public QDialog
 public:
     explicit NewLoginDialog(QWidget *parent = nullptr);
     ~NewLoginDialog();
+    QString getUsername();
+    QString getPassword();
 
 private:
     Ui::NewLoginDialog *ui;

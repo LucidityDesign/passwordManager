@@ -25,6 +25,7 @@ private:
     VaultManager *m_vaultManager;
 
     void populatePasswordList();
+    void openNewPasswordDialog();
 };
 
 #endif // STACKEDWIDGET_H

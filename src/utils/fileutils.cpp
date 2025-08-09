@@ -3,12 +3,12 @@
 #include <QFile>
 #include <sodium.h>
 
-bool writeEncryptedFile(const QString &filePath, const QString &password)
+bool writeEncryptedFile(const QString &filePath, const QString &password, const QByteArray &data)
 {
   QByteArray salt(crypto_pwhash_SALTBYTES, 0);
   randombytes_buf(salt.data(), salt.size());
 
-  QByteArray plaintext = "[{\"username\":\"Alex\", \"password\":\"12345\"}]"; // Example plaintext data
+  QByteArray plaintext = data; // Use the provided data
 
   QByteArray key = deriveKeyFromPassword(password, salt);
 

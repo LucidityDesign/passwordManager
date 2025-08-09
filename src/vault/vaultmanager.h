@@ -16,8 +16,8 @@ public:
   VaultManager();
   ~VaultManager();
   void openVault(const QString &filePath, const QString &password);
-  void saveVault(const QString &filePath, const QString &password);
-  void addEntry(const QString &username, const QString &password);
+  // void saveVault(const QString &filePath);
+  void addEntry(const VaultEntry &entry);
   void removeEntry(const QString &username);
   void updateEntry(const QString &username, const QString &newPassword);
   QList<VaultEntry> getEntries() const;
@@ -31,6 +31,7 @@ private:
   QList<VaultEntry> m_entries; // List of username-password pairs
   bool m_isVaultOpen = false;
   void loadEntries(QByteArray decryptedData);
+  void saveEntries(QList<VaultEntry> entries);
 };
 
 #endif // VAULTMANAGER_H

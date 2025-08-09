@@ -1,5 +1,6 @@
 #include "stackedwidget.h"
 #include "ui_stackedwidget.h"
+#include "newlogindialog.h"
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -11,7 +12,7 @@ StackedWidget::StackedWidget(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // connect(ui, )
+    connect(ui->addLoginButton, &QPushButton::clicked, this, &StackedWidget::openNewPasswordDialog);
 }
 
 StackedWidget::~StackedWidget()
@@ -51,4 +52,30 @@ void StackedWidget::populatePasswordList()
     }
 
     ui->tableWidget->resizeColumnsToContents(); // Adjust column widths
+}
+
+void StackedWidget::openNewPasswordDialog()
+{
+    // void
+    auto newLoginDialog = new NewLoginDialog(this);
+
+    auto vaultManager = &m_vaultManager;
+
+    connect(newLoginDialog, &QDialog::accepted, this, [this, newLoginDialog, vaultManager]()
+            {
+                qDebug() << "data";
+
+                QString password = newLoginDialog->getPassword();
+                QString username = newLoginDialog->getUsername();
+
+                qDebug() << username << "\n";
+                qDebug() << password << "\n";
+
+                VaultEntry entry = {username, password};
+
+                (*vaultManager)->addEntry(entry);
+
+                this->populatePasswordList(); });
+
+    newLoginDialog->exec();
 }
