@@ -17,9 +17,10 @@ VaultManager::VaultManager()
 void VaultManager::openVault(const QString &filePath, const QString &password)
 {
 
-    if (!FileUtils::exists(filePath)) {
-        FileUtils::createVault(filePath, password);
-    }
+  if (!FileUtils::exists(filePath))
+  {
+    FileUtils::createVault(filePath, password);
+  }
   // Implementation for opening the vault
   m_isVaultOpen = true;
 
@@ -33,6 +34,9 @@ void VaultManager::openVault(const QString &filePath, const QString &password)
 
   startSession(password);
   loadEntries(m_decrypted);
+
+  // ✅ Emit signal that vault was opened
+  emit vaultOpened(filePath);
 }
 
 void VaultManager::closeVault()
@@ -42,8 +46,13 @@ void VaultManager::closeVault()
   // Implementation for closing the vault
   m_decrypted.clear();
   m_entries.clear();
+  m_filePath.clear();
+  m_sessionKey.clear();
 
   m_isVaultOpen = false;
+
+  // ✅ Emit signal that vault was closed
+  emit vaultClosed("manual");
 }
 
 VaultManager::~VaultManager()
@@ -81,6 +90,9 @@ void VaultManager::addEntry(const VaultEntry &entry)
   m_entries.append(entry);
 
   saveEntries(m_entries);
+
+  // ✅ Emit signal that entry was added
+  emit entryAdded(entry);
 }
 
 void VaultManager::saveEntries(QList<VaultEntry> entries)

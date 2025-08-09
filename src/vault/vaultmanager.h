@@ -25,10 +25,29 @@ public:
   void removeEntry(const QString &username);
   void updateEntry(const QString &username, const QString &newPassword);
   QList<VaultEntry> getEntries() const;
-  // bool isVaultOpen() const;
+  bool isVaultOpen() const { return m_isVaultOpen; }
   void closeVault();
   void startSession(const QString &password);
   void extendSession();
+
+signals:
+  /**
+   * @brief Emitted when the vault is successfully opened
+   * @param filePath Path to the opened vault file
+   */
+  void vaultOpened(const QString &filePath);
+
+  /**
+   * @brief Emitted when the vault is closed (manually or due to timeout)
+   * @param reason Reason for closure ("manual", "timeout", "error", etc.)
+   */
+  void vaultClosed(const QString &reason);
+
+  /**
+   * @brief Emitted when a new entry is added to the vault
+   * @param entry The entry that was added
+   */
+  void entryAdded(const VaultEntry &entry);
 
 private:
   QByteArray m_sessionKey;

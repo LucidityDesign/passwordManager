@@ -29,5 +29,10 @@ private slots:
     void onPasswordEntered();
     void openPasswordlist();
     void lockVault();
+
+    // VaultManager event handlers
+    void onVaultOpened(const QString &filePath);
+    void onVaultClosed(const QString &reason);
+    void onEntryAdded(const VaultEntry &entry);
 };
 #endif // MAINWINDOW_H
