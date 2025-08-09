@@ -20,6 +20,7 @@ void VaultManager::openVault(const QString &filePath, const QString &password)
   qDebug() << "Input was:" << password << "\n";
   qDebug() << "Decrypted Data is: " << decrypted << "\n";
 
+  // TODO: Don't store plain text password in memory
   m_decrypted = decrypted;
   m_password = password;
   m_filePath = filePath;
