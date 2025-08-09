@@ -54,15 +54,6 @@ void MainWindow::onPasswordEntered()
 
   // writeEncryptedFile("vault.txt", text);
 
-  // TODO: move this logic to VaultManager
-  if (!fileExists("vault.txt"))
-  {
-    writeEncryptedFile("vault.txt", password);
-    ui->label->setText("File does not exist, created a new vault.");
-    ui->label->setVisible(true);
-    return;
-  }
-
   try
   {
     m_vaultManager.openVault("vault.txt", password);

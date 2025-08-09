@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QList>
+#include <QObject>
+#include <QTimerEvent>
 
 struct VaultEntry
 {
@@ -10,8 +12,10 @@ struct VaultEntry
   QString password;
 };
 
-class VaultManager
+class VaultManager : public QObject
 {
+  Q_OBJECT
+
 public:
   VaultManager();
   ~VaultManager();
@@ -23,15 +27,21 @@ public:
   QList<VaultEntry> getEntries() const;
   // bool isVaultOpen() const;
   void closeVault();
+  void startSession(const QString &password);
+  void extendSession();
 
 private:
+  QByteArray m_sessionKey;
+  int m_sessionTimer;
   QString m_filePath;
-  QString m_password;
   QByteArray m_decrypted;
   QList<VaultEntry> m_entries; // List of username-password pairs
   bool m_isVaultOpen = false;
   void loadEntries(QByteArray decryptedData);
   void saveEntries(QList<VaultEntry> entries);
+
+protected:
+  void timerEvent(QTimerEvent *event) override;
 };
 
 #endif // VAULTMANAGER_H
