@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../utils/fileutils.h"
+#include "stackedwidget.h"
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -12,6 +13,11 @@ MainWindow::MainWindow(QWidget *parent)
   connect(ui->lineEdit_2, &QLineEdit::returnPressed, this, &MainWindow::onPasswordEntered);
 
   ui->label->setVisible(false);
+
+  QPushButton *lockButton = new QPushButton("Lock");
+  ui->statusbar->addWidget(lockButton);
+
+  connect(lockButton, &QPushButton::clicked, this, &MainWindow::lockVault);
 }
 
 MainWindow::~MainWindow()
@@ -24,15 +30,31 @@ void MainWindow::onButtonClicked()
   MainWindow::onPasswordEntered();
 }
 
+void MainWindow::openPasswordlist()
+{
+  // Create the widget first
+  StackedWidget *passwordWidget = new StackedWidget(this);
+
+  // Pass the VaultManager instance to the child widget
+  passwordWidget->setVaultManager(&m_vaultManager);
+
+  // Add to stack and switch
+  ui->stackedWidget->insertWidget(1, passwordWidget);
+  ui->stackedWidget->setCurrentIndex(1);
+}
+
 void MainWindow::onPasswordEntered()
 {
 
   QString password = ui->lineEdit_2->text();
 
+  ui->lineEdit_2->clear();
+
   ui->label->setVisible(false);
 
   // writeEncryptedFile("vault.txt", text);
 
+  // TODO: move this logic to VaultManager
   if (!fileExists("vault.txt"))
   {
     writeEncryptedFile("vault.txt", password);
@@ -43,10 +65,9 @@ void MainWindow::onPasswordEntered()
 
   try
   {
-    QByteArray decrypted = readEncryptedFile("vault.txt", password);
+    m_vaultManager.openVault("vault.txt", password);
 
-    qDebug() << "Input was:" << password << "\n";
-    qDebug() << "Decrypted Data is: " << decrypted << "\n";
+    openPasswordlist();
   }
   catch (...)
   {
@@ -54,4 +75,10 @@ void MainWindow::onPasswordEntered()
     ui->label->setVisible(true);
     return;
   }
+}
+
+void MainWindow::lockVault()
+{
+  ui->stackedWidget->setCurrentIndex(0);
+  m_vaultManager.closeVault();
 }

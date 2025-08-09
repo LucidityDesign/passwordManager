@@ -4,7 +4,14 @@ project(passwordmanager LANGUAGES CXX)
 include_directories(/opt/homebrew/include)
 link_directories(/opt/homebrew/lib)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Tell CMake where Qt is (adjust path if needed)
+set(CMAKE_PREFIX_PATH "/opt/homebrew/opt/qt")
+
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets LinguistTools)
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
 
 qt_standard_project_setup()
 
@@ -18,6 +25,14 @@ qt_add_executable(passwordmanager
     src/crypto/cryptoutils.h
     src/utils/fileutils.cpp
     src/utils/fileutils.h
+
+
+
+
+
+    src/ui/stackedwidget.h src/ui/stackedwidget.cpp src/ui/stackedwidget.ui
+    src/ui/newlogindialog.h src/ui/newlogindialog.cpp src/ui/newlogindialog.ui
+    src/vault/vaultmanager.h src/vault/vaultmanager.cpp
 )
 
 qt_add_translations(
@@ -31,6 +46,7 @@ target_link_libraries(passwordmanager
         Qt::Widgets
         sodium
 )
+target_link_libraries(passwordmanager PRIVATE Qt6::Widgets)
 
 include(GNUInstallDirs)
 

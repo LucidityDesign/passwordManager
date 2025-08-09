@@ -2,10 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "../vault/vaultmanager.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
@@ -19,9 +21,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    VaultManager m_vaultManager;
+    // StackedWidget *stackedWidget;
 
 private slots:
     void onButtonClicked();
     void onPasswordEntered();
+    void openPasswordlist();
+    void lockVault();
 };
 #endif // MAINWINDOW_H

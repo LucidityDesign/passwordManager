@@ -8,7 +8,7 @@ bool writeEncryptedFile(const QString &filePath, const QString &password)
   QByteArray salt(crypto_pwhash_SALTBYTES, 0);
   randombytes_buf(salt.data(), salt.size());
 
-  QByteArray plaintext = "hello good bye and ciao";
+  QByteArray plaintext = "[{\"username\":\"Alex\", \"password\":\"12345\"}]"; // Example plaintext data
 
   QByteArray key = deriveKeyFromPassword(password, salt);
 
