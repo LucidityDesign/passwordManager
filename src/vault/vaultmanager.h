@@ -24,7 +24,7 @@ struct VaultEntry
   {
     if (password.isEmpty())
     {
-      throw FileUtils::CryptoOperationError("Cannot encrypt empty password");
+      throw CryptoUtils::CryptoOperationError("Cannot encrypt empty password");
     }
 
     // Generate a unique salt for this specific password entry
@@ -32,15 +32,19 @@ struct VaultEntry
 
     // Use the master key directly with the individual salt for key derivation
     // This creates a unique key for each password without storing the master password
-    QByteArray derivedKey = deriveKeyFromPassword(QString::fromUtf8(masterKey), individualSalt);
+    QByteArray derivedKey = CryptoUtils::deriveKeyFromPassword(QString::fromUtf8(masterKey), individualSalt);
 
     QByteArray nonce, ciphertext;
 
-    if (!encrypt(password.toUtf8(), derivedKey, ciphertext, nonce))
+    try
+    {
+      CryptoUtils::encrypt(password.toUtf8(), derivedKey, ciphertext, nonce);
+    }
+    catch (const CryptoUtils::CryptoOperationError &e)
     {
       // Clear sensitive data before throwing
       derivedKey.fill(0);
-      throw FileUtils::CryptoOperationError("Failed to encrypt password");
+      throw;
     }
 
     // Store format: individual_salt (16 bytes) + nonce (24 bytes) + ciphertext
@@ -60,7 +64,7 @@ struct VaultEntry
   {
     if (encryptedPassword.isEmpty())
     {
-      throw FileUtils::CryptoOperationError("No encrypted password data");
+      throw CryptoUtils::CryptoOperationError("No encrypted password data");
     }
 
     // Parse encrypted data format: individual_salt + nonce + ciphertext
@@ -69,7 +73,7 @@ struct VaultEntry
 
     if (encryptedPassword.size() < SALT_SIZE + NONCE_SIZE)
     {
-      throw FileUtils::CryptoOperationError("Invalid encrypted password format");
+      throw CryptoUtils::CryptoOperationError("Invalid encrypted password format");
     }
 
     QByteArray individualSalt = encryptedPassword.left(SALT_SIZE);
@@ -77,15 +81,18 @@ struct VaultEntry
     QByteArray ciphertext = encryptedPassword.mid(SALT_SIZE + NONCE_SIZE);
 
     // Use the same key derivation as during encryption
-    QByteArray derivedKey = deriveKeyFromPassword(QString::fromUtf8(masterKey), individualSalt);
+    QByteArray derivedKey = CryptoUtils::deriveKeyFromPassword(QString::fromUtf8(masterKey), individualSalt);
 
     QByteArray decrypted;
 
-    if (!decrypt(ciphertext, derivedKey, nonce, decrypted))
+    try
     {
-      // Clear sensitive data before throwing
+      CryptoUtils::decrypt(ciphertext, derivedKey, nonce, decrypted);
+    }
+    catch (const CryptoUtils::CryptoOperationError &e)
+    {
       derivedKey.fill(0);
-      throw FileUtils::CryptoOperationError("Failed to decrypt password");
+      throw;
     }
 
     QString result = QString::fromUtf8(decrypted);

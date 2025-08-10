@@ -19,16 +19,6 @@ namespace FileUtils
         : std::runtime_error(message) {}
   };
 
-  /**
-   * @brief Exception class for encryption/decryption errors
-   */
-  class CryptoOperationError : public std::runtime_error
-  {
-  public:
-    explicit CryptoOperationError(const std::string &message)
-        : std::runtime_error(message) {}
-  };
-
   // =============================================================================
   // HIGH-LEVEL API (Recommended for most use cases)
   // =============================================================================

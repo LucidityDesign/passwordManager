@@ -16,21 +16,18 @@ namespace FileUtils
   {
     if (password.isEmpty())
     {
-      throw CryptoOperationError("Password cannot be empty");
+      throw CryptoUtils::CryptoOperationError("Password cannot be empty");
     }
 
     try
     {
       // Generate new salt for new vault
       QByteArray salt = generateSalt();
-      QByteArray key = deriveKeyFromPassword(password, salt);
+      QByteArray key = CryptoUtils::deriveKeyFromPassword(password, salt);
 
       // Encrypt the data
       QByteArray nonce, ciphertext;
-      if (!encrypt(data, key, ciphertext, nonce))
-      {
-        throw CryptoOperationError("Failed to encrypt vault data");
-      }
+      CryptoUtils::encrypt(data, key, ciphertext, nonce);
 
       // Write to file
       if (!Detail::writeVaultToFile(filePath, salt, nonce, ciphertext))
@@ -51,7 +48,7 @@ namespace FileUtils
   {
     if (password.isEmpty())
     {
-      throw CryptoOperationError("Password cannot be empty");
+      throw CryptoUtils::CryptoOperationError("Password cannot be empty");
     }
 
     if (!exists(filePath))
@@ -93,12 +90,9 @@ namespace FileUtils
       }
 
       // Decrypt
-      QByteArray key = deriveKeyFromPassword(password, salt);
+      QByteArray key = CryptoUtils::deriveKeyFromPassword(password, salt);
       QByteArray decrypted;
-      if (!decrypt(ciphertext, key, nonce, decrypted))
-      {
-        throw CryptoOperationError("Decryption failed - incorrect password or corrupted file");
-      }
+      CryptoUtils::decrypt(ciphertext, key, nonce, decrypted);
 
       return decrypted;
     }
@@ -113,7 +107,7 @@ namespace FileUtils
   {
     if (sessionKey.isEmpty())
     {
-      throw CryptoOperationError("Session key cannot be empty");
+      throw CryptoUtils::CryptoOperationError("Session key cannot be empty");
     }
 
     if (!exists(filePath))
@@ -132,10 +126,7 @@ namespace FileUtils
 
       // Encrypt with session key
       QByteArray nonce, ciphertext;
-      if (!encrypt(data, sessionKey, ciphertext, nonce))
-      {
-        throw CryptoOperationError("Failed to encrypt vault update");
-      }
+      CryptoUtils::encrypt(data, sessionKey, ciphertext, nonce);
 
       // Write updated vault
       if (!Detail::writeVaultToFile(filePath, salt, nonce, ciphertext))

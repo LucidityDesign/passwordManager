@@ -158,7 +158,7 @@ void VaultManager::startSession(const QString &password)
   QByteArray vaultSalt = FileUtils::extractSalt(m_filePath);
 
   // Derive session key for vault operations
-  m_vaultSessionKey = deriveKeyFromPassword(password, vaultSalt);
+  m_vaultSessionKey = CryptoUtils::deriveKeyFromPassword(password, vaultSalt);
 
   // Create a separate salt for password encryption to ensure key independence
   // We need a deterministic but different salt, so we'll derive it from the vault salt
@@ -168,7 +168,7 @@ void VaultManager::startSession(const QString &password)
   QByteArray passwordSalt = QCryptographicHash::hash(passwordSaltBase, QCryptographicHash::Sha256).left(crypto_pwhash_SALTBYTES);
 
   // Derive a separate master key for password encryption/decryption using independent salt
-  m_passwordMasterKey = deriveKeyFromPassword(password, passwordSalt);
+  m_passwordMasterKey = CryptoUtils::deriveKeyFromPassword(password, passwordSalt);
 
   m_sessionTimer = startTimer(SESSION_TIMEOUT);
   m_isVaultOpen = true;
@@ -205,7 +205,7 @@ QString VaultManager::getPassword(const QString &username)
       {
         return entry.decryptPassword(m_passwordMasterKey);
       }
-      catch (const FileUtils::CryptoOperationError &e)
+      catch (const CryptoUtils::CryptoOperationError &e)
       {
         qWarning() << "Failed to decrypt password for" << username << ":" << e.what();
         return QString();
@@ -235,7 +235,7 @@ QString VaultManager::getPasswordSecure(const QString &username)
         // Consider using it immediately and not storing it in variables
         return decryptedPassword;
       }
-      catch (const FileUtils::CryptoOperationError &e)
+      catch (const CryptoUtils::CryptoOperationError &e)
       {
         qWarning() << "Failed to decrypt password for" << username << ":" << e.what();
         return QString();
