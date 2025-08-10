@@ -140,9 +140,6 @@ public:
   void startSession(const QString &password);
   void extendSession();
 
-  // Method to get password on demand
-  QString getPassword(const QString &username);
-
   // Method to get password securely with automatic memory clearing
   QString getPasswordSecure(const QString &username);
 

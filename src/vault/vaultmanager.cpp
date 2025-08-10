@@ -100,16 +100,6 @@ void VaultManager::loadEntries(QByteArray decryptedData)
           entry.encryptedPassword = encryptedPassword;
           m_entries.append(entry);
         }
-        else
-        {
-          // Legacy format - plaintext password, encrypt it now
-          QString plainPassword = obj.value("password").toString();
-          VaultEntry entry;
-          entry.username = username;
-          entry.password = plainPassword;
-          entry.encryptPassword(m_passwordMasterKey);
-          m_entries.append(entry);
-        }
       }
     }
   }
@@ -192,29 +182,6 @@ void VaultManager::timerEvent(QTimerEvent *event)
     closeVault();
   }
   QObject::timerEvent(event);
-}
-
-QString VaultManager::getPassword(const QString &username)
-{
-  // Find the entry and decrypt its password on demand
-  for (const VaultEntry &entry : m_entries)
-  {
-    if (entry.username == username)
-    {
-      try
-      {
-        return entry.decryptPassword(m_passwordMasterKey);
-      }
-      catch (const CryptoUtils::CryptoOperationError &e)
-      {
-        qWarning() << "Failed to decrypt password for" << username << ":" << e.what();
-        return QString();
-      }
-    }
-  }
-
-  qWarning() << "Entry not found:" << username;
-  return QString(); // Entry not found
 }
 
 QString VaultManager::getPasswordSecure(const QString &username)
