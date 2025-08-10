@@ -2,6 +2,7 @@
 #define STACKEDWIDGET_H
 
 #include <QStackedWidget>
+#include <QPushButton>
 #include "../vault/vaultmanager.h"
 
 namespace Ui
@@ -26,6 +27,12 @@ private:
 
     void populatePasswordList();
     void openNewPasswordDialog();
+
+    // Secure password reveal method
+    void revealPasswordSecurely(const QString &username, QPushButton *button);
+
+    // Secure clipboard copy method
+    void copyPasswordToClipboard(const QString &username);
 };
 
 #endif // STACKEDWIDGET_H

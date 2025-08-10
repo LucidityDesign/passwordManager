@@ -189,6 +189,7 @@ namespace FileUtils
     }
   }
 
+  // TODO: move to CryptoUtils
   QByteArray generateSalt()
   {
     QByteArray salt(crypto_pwhash_SALTBYTES, 0);
