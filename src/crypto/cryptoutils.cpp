@@ -1,6 +1,7 @@
 #include "cryptoutils.h"
 #include <sodium.h>
 #include <QDebug>
+#include <QRandomGenerator>
 
 namespace CryptoUtils
 {
@@ -64,5 +65,17 @@ namespace CryptoUtils
     decrypted.resize(decrypted_len);
     outPlain = decrypted;
     return true;
+  }
+
+  QString generateRandomPassword(int length)
+  {
+    const QString validCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+    QString password;
+    for (int i = 0; i < length; ++i)
+    {
+      int index = QRandomGenerator::global()->bounded(validCharacters.length());
+      password.append(validCharacters[index]);
+    }
+    return password;
   }
 }

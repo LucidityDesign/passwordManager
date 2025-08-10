@@ -19,6 +19,8 @@ public:
 
 private:
     Ui::NewLoginDialog *ui;
+
+    void generatePassword();
 };
 
 #endif // NEWLOGINDIALOG_H

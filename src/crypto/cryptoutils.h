@@ -46,6 +46,8 @@ namespace CryptoUtils
    * @throws CryptoOperationError if decryption fails
    */
   bool decrypt(const QByteArray &ciphertext, const QByteArray &key, const QByteArray &nonce, QByteArray &outPlain);
+
+  QString generateRandomPassword(int length = 16);
 }
 
 #endif // CRYPTOUTILS_H
